@@ -1,0 +1,4 @@
+- proje_klasoru/
+  - main.py
+  - requirements.txt
+  - output/   # Çevirilerin ve ses dosyalarının depolanacağı klasör
