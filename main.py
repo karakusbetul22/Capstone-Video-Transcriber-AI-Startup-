@@ -4,6 +4,8 @@ import streamlit as st
 import ffmpeg
 import openai
 import os
+import pdfkit
+from docx import Document
 from pydub import AudioSegment
 
 # OpenAI API anahtarını yapılandır
@@ -70,6 +72,24 @@ def translate_text(text, target_language):
     except Exception as e:
         st.error(f"Çeviri hatası: {e}")
 
+# .docx dosyası oluşturma fonksiyonu
+def save_translation_as_docx(translation, language):
+    doc = Document()
+    doc.add_heading(f'{language} Çevirisi', 0)
+    doc.add_paragraph(translation)
+    file_path = f"output/{language}_translation.docx"
+    doc.save(file_path)
+    return file_path
+
+# .pdf dosyası oluşturma fonksiyonu
+def save_translation_as_pdf(translation, language):
+    html_content = f"<h1>{language} Çevirisi</h1><p>{translation}</p>"
+    pdf_file_path = f"output/{language}_translation.pdf"
+    pdfkit.from_string(html_content, pdf_file_path)
+    return pdf_file_path
+
+
+
 # Video Yüklenirse İşlemleri Başlatıyor
 if uploaded_file:
     # Geçici video dosyasını kaydet
@@ -112,7 +132,21 @@ if uploaded_file:
                 file_name=f"{lang}_translation.txt",
                 mime="text/plain"
             )
+            docx_file_path = save_translation_as_docx(translations[lang], lang)
+            st.download_button(
+                label=f"{lang} Çeviriyi İndir (.docx)",
+                data=open(docx_file_path, "rb"),
+                file_name=f"{lang}_translation.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
 
+            pdf_file_path = save_translation_as_pdf(translations[lang], lang)
+            st.download_button(
+                label=f"{lang} Çeviriyi İndir (.pdf)",
+                data=open(pdf_file_path, "rb"),
+                file_name=f"{lang}_translation.pdf",
+                mime="application/pdf"
+            )
 # Gereksiz dosyaları temizle
 if os.path.exists("output/temp_video.mp4"):
     os.remove("output/temp_video.mp4")
