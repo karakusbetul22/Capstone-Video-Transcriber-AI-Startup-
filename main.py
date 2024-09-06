@@ -85,6 +85,14 @@ if uploaded_file:
     transcription = transcribe_audio(audio_path)
     st.write("Transkript:", transcription)
 
+     # Ses Dosyasını İndirme Seçeneği
+    st.download_button(
+        label="Ses Dosyasını İndir",
+        data=open(audio_path, "rb"),
+        file_name="audio_output.wav",
+        mime="audio/wav"
+    )
+    
     # Metin -> Çoklu Dil Çevirisi ve İndirme Linkleri belirtiliyor
     if transcription and languages:
         translations = {}
