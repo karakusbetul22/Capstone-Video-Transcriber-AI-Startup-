@@ -2,3 +2,5 @@ streamlit
 ffmpeg-python
 openai
 pydub
+pdfkit
+python-docx
